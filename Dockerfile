@@ -23,11 +23,12 @@ RUN locale-gen ja_JP.UTF-8
 # 言語を日本語に設定
 ENV LANG ja_JP.UTF-8
 # Desktop環境をインストール
-RUN sudo apt-get -y install vanilla-gnome-desktop vanilla-gnome-default-settings --no-install-recommends
+RUN apt install -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" keyboard-configuration
+RUN apt -y install vanilla-gnome-desktop vanilla-gnome-default-settings dbus-x11
 # 全角を表示できるフォントをインストール
 RUN apt -y install fonts-noto-cjk --no-install-recommends
 # IMEのインストールと設定
-RUN sudo apt -y install ibus-mozc --no-install-recommends
+RUN apt -y install ibus-mozc --no-install-recommends
 RUN gsettings set org.gnome.desktop.input-sources sources "[('xkb', 'jp'), ('ibus', 'mozc-jp')]"
 # VNC環境のインストール
 RUN apt install -y tigervnc-standalone-server tigervnc-scraping-server tigervnc-common
@@ -36,11 +37,11 @@ RUN apt install -y novnc websockify
 # 署名鍵の登録
 RUN wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > packages.microsoft.gpg
 # packages.microsoft.gpgの所有権とパーミッションを変更
-RUN sudo install -D -o root -g root -m 644 packages.microsoft.gpg /etc/apt/keyrings/packages.microsoft.gpg
+RUN install -D -o root -g root -m 644 packages.microsoft.gpg /etc/apt/keyrings/packages.microsoft.gpg
 # コピー元のファイル削除
 RUN rm -f packages.microsoft.gpg
 # リポジトリの登録
-RUN sudo sh -c 'echo "deb [arch=amd64,arm64,armhf signed-by=/etc/apt/keyrings/packages.microsoft.gpg] https://packages.microsoft.com/repos/code stable main" > /etc/apt/sources.list.d/vscode.list'
+RUN sh -c 'echo "deb [arch=amd64,arm64,armhf signed-by=/etc/apt/keyrings/packages.microsoft.gpg] https://packages.microsoft.com/repos/code stable main" > /etc/apt/sources.list.d/vscode.list'
 # Vscodeのインストール
 RUN apt update && apt -y upgrade
 RUN apt -y install code --no-install-recommends
