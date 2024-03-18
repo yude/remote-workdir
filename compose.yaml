@@ -1,0 +1,12 @@
+version: '3.3'
+services:
+  vnc:
+    build:
+      dockerfile: Dockerfile
+    ports:
+      - 6080:6080 # noVNC
+      - 5901:5901 # VNC Server
+    volumes:
+      - ./workdir:/home/workdir
+      - ./supervisord.conf:/etc/supervisor/conf.d/supervisord.conf
+    stdin_open: true
